@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Votação de Imagens</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+    .gallery { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+    .image-card { border: 1px solid #ccc; border-radius: 10px; padding: 10px; cursor: pointer; transition: 0.3s; }
+    .image-card:hover { box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+    img { width: 200px; height: 200px; object-fit: cover; border-radius: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Escolha sua imagem favorita</h1>
+  <div class="gallery" id="imageGallery"></div>
+
+  <script>
+    const images = [
+      { id: 'img1', src: 'img1.jpg' },
+      { id: 'img2', src: 'img2.jpg' },
+      { id: 'img3', src: 'img3.jpg' },
+      { id: 'img4', src: 'img4.jpg' },
+    ];
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function renderImages() {
+      shuffle(images);
+      const gallery = document.getElementById('imageGallery');
+      gallery.innerHTML = '';
+      images.forEach(image => {
+        const card = document.createElement('div');
+        card.className = 'image-card';
+        card.innerHTML = `<img src="${image.src}" alt="Imagem">`;
+        card.onclick = () => vote(image.id);
+        gallery.appendChild(card);
+      });
+    }
+
+    function vote(imageId) {
+      fetch('/vote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageId })
+      }).then(() => {
+        alert('Voto registrado com sucesso!');
+        renderImages();
+      });
+    }
+
+    renderImages();
+  </script>
+</body>
+</html>
